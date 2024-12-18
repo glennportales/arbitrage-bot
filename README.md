@@ -35,49 +35,44 @@ Si en algún momento cambias `paper_trade` a `False` y configuras las llaves API
 ### Funciones
 
 1. **get_prices()**  
-   Esta función obtiene los precios actuales de compra (`bid`) y venta (`ask`) para el símbolo seleccionado desde cada casa de cambio configurada en el diccionario `exchanges`.  
-   - Intenta llamar a `fetch_ticker(symbol)` en cada casa de cambio.  
-   - Si obtiene el `bid` y el `ask`, guarda estos valores en un diccionario `prices`.
-   - Si ocurre un error (por ejemplo, si la casa de cambio no soporta el símbolo o hay un problema con la conexión), imprime el error en pantalla y pasa a la siguiente casa de cambio.
+   Obtiene los precios actuales de compra (`bid`) y venta (`ask`) para el símbolo seleccionado desde cada casa de cambio configurada. Si hay errores (ej. símbolo no soportado), se informan y se continúa con las demás casas de cambio.
 
 2. **find_arbitrage_opportunity(prices)**  
-   Esta función toma el diccionario de precios obtenido por `get_prices()` y busca diferencias de precio que puedan dar una ganancia de arbitraje.  
-   - Compara todos los pares de casas de cambio (por ejemplo, comprar en A y vender en B).
-   - Calcula la ganancia potencial: `profit = precio_venta(B) - precio_compra(A)`.
-   - Si la ganancia supera el `fee_tolerance` (ej. 0.5% del precio de compra), se considera una oportunidad válida.
-   - Si encuentra una oportunidad, la retorna como una tupla con la información relevante. Si no, retorna `None`.
+   Analiza las diferencias de precio entre las casas de cambio. Si la ganancia potencial supera la tolerancia a las comisiones, considera la oportunidad como válida.
 
 3. **execute_trade(buy_exchange_name, sell_exchange_name, buy_price, sell_price, amount)**  
-   Esta función ejecuta el trade real si `paper_trade` está en `False`.  
-   - Intentará crear una orden de compra en la casa de cambio `buy_exchange_name` y luego una orden de venta en `sell_exchange_name`.
-   - Muestra mensajes en pantalla con la información de las órdenes.
-   - En caso de error, muestra el error en pantalla.  
-   
-   **Nota:** En el modo `paper_trade = True`, esta función no se llama, ya que las operaciones se simulan y no se colocan órdenes reales.
+   Ejecuta la operación real si `paper_trade = False`. En modo prueba (`True`), solo simula y no coloca órdenes reales.
 
 ---
 
 ### Flujo del Programa (main)
 
-La función `main()` ejecuta un ciclo infinito (`while True`) en el cual:
-
-1. Llama a `get_prices()` para obtener los precios actuales.
-2. Verifica si hay al menos 2 casas de cambio con datos válidos (ya que se necesitan mínimo dos para arbitraje).
-3. Llama a `find_arbitrage_opportunity()` para ver si hay oportunidades.
-   - Si hay una oportunidad, imprime detalles:
-     - En `paper_trade = True`, solo simula la operación (imprime la información de la operación sin ejecutar órdenes).
-     - En `paper_trade = False`, llama a `execute_trade()` para colocar órdenes reales (requiere claves API y configuración adecuada).
-4. Si no hay oportunidades, imprime que no se encontraron.
-5. Espera `sleep_interval` segundos y vuelve a comenzar.
+1. El programa llama a `get_prices()` para obtener los precios actuales.
+2. Comprueba si hay al menos dos casas de cambio con datos.
+3. Llama a `find_arbitrage_opportunity()` para detectar oportunidades.
+   - En `paper_trade = True`, imprime lo que haría sin ejecutar.
+   - En `paper_trade = False`, llama a `execute_trade()` para colocar órdenes reales.
+4. Si no hay oportunidades, lo indica en la consola.
+5. Espera `sleep_interval` segundos antes de repetir el ciclo.
 
 ---
 
 ### Recomendaciones
-  
+
 - **API Keys y Testnets:**  
-  Cuando desees operar de verdad, necesitas agregar las llaves (`apiKey` y `secret`) de la casa de cambio seleccionada (siempre y cuando lo permita en tu país). También puedes usar testnets si la casa de cambio dispone de entornos de prueba.
+  Antes de operar en vivo, configura tus llaves de API en la casa de cambio y, si es posible, practica en un testnet. Esto te permite probar sin riesgo real.
 
 - **Riesgo y Responsabilidad:**  
-  El arbitraje puede ser riesgoso. Los precios pueden cambiar mientras la orden se ejecuta (slippage), la liquidez puede no ser suficiente, y los retiros entre casas de cambio toman tiempo. Siempre ten un plan de gestión de riesgo.
+  El arbitraje conlleva riesgos. Los precios pueden variar rápidamente (slippage), la liquidez puede ser limitada y mover fondos entre casas de cambio toma tiempo. Ten un plan de gestión de riesgo.
+
+- **Visualización de Precios en Múltiples Casas de Cambio:**  
+  Si integras la funcionalidad de trazar gráficas de velas (candlestick charts) para diferentes intercambios en simultáneo, es normal que notes diferencias en precios y velas entre ellos. Esto no se debe a un error en el código, sino a las características propias de cada mercado:
+
+  - **Mercados Independientes:** Cada casa de cambio tiene su propia liquidez, spread y dinámica de precios. Por eso, el mismo activo puede verse con precios ligeramente diferentes.
+  - **Distinta Precisión en el Precio (Tick Size):** Un exchange puede reportar precios con tres decimales y otro con cuatro, lo cual impacta el aspecto de las velas.
+  - **Variaciones en el Tiempo y Latencia:** Los datos se obtienen a intervalos regulares, y cada mercado puede cambiar entre lecturas de distinta forma.
+  - **Sin Manipulación de Datos:** El código muestra la data tal cual la recibe de cada exchange. Las diferencias en las velas reflejan condiciones reales del mercado, no fallos del programa.
+
+Estas discrepancias en las velas y precios entre intercambios son parte del escenario real de arbitraje, y conocerlas te ayuda a interpretar mejor el panorama al momento de decidir tus estrategias.
 
 ---
