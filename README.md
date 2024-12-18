@@ -1,10 +1,6 @@
 # arbitrage-bot
  Python Arbitrage Bot testing
 
-A continuación se presenta la documentación del código en español (puertorriqueño). Las secciones comentadas en el código en inglés permanecerán igual, pero las explicaciones y descripciones se presentarán en español entendido por puertorriqueños.
-
----
-
 ### Descripción General
 
 Este script es un bot de arbitraje que busca diferencias de precio (arbitraje) en el par de trading **SOL/USDT** entre múltiples casas de cambio (exchanges). Si el bot encuentra una oportunidad de arbitraje, lo reporta y, dependiendo del modo en que se esté ejecutando (de prueba o "paper trading" vs. modo real), simulará la operación o intentará ejecutarla en la(s) casa(s) de cambio seleccionada(s).
@@ -77,9 +73,6 @@ La función `main()` ejecuta un ciclo infinito (`while True`) en el cual:
 ---
 
 ### Recomendaciones
-
-- **Antes de Hacer Trading Real:**  
-  Asegúrate de probar con `paper_trade = True` el tiempo que sea necesario. Verifica que las casas de cambio y el par de trading estén disponibles, y que el bot se comporte de acuerdo a lo esperado.
   
 - **API Keys y Testnets:**  
   Cuando desees operar de verdad, necesitas agregar las llaves (`apiKey` y `secret`) de la casa de cambio seleccionada (siempre y cuando lo permita en tu país). También puedes usar testnets si la casa de cambio dispone de entornos de prueba.
