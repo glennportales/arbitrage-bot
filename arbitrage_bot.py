@@ -15,7 +15,7 @@ exchanges = {
     # Add more exchanges if desired
 }
 
-symbol = "XRP/USDT"
+symbol = "SOL/USDT"
 fee_tolerance = 0.005
 sleep_interval = 10
 timeframe = '1m'
