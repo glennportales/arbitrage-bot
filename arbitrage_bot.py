@@ -17,7 +17,7 @@ exchanges = {
 
 symbol = "XRP/USDT"
 fee_tolerance = 0.005
-sleep_interval = 5
+sleep_interval = 10
 timeframe = '1m'
 limit = 50
 
